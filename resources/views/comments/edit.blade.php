@@ -1,4 +1,6 @@
 @extends('layouts.app')
+<x-header :user="$user->name"/>
+@section('main')
 <form method="POST" action="{{ route('comments.update', ['post' => $post->id, 'comment' => $comment->id]) }}">
 @csrf @method('PUT')
             <label for="content">Comment</label>
@@ -7,3 +9,4 @@
 
         <button type="submit" class="btn btn-primary mt-3">Edit</button>
 </form>
+@endsection

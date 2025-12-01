@@ -2,54 +2,69 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TestMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
-    public function index() {
-        return view('auth.login');
+    public function index()
+    {
+        if (Auth::check()) {
+            return redirect()->route('posts.index');
+        }
+        return response()->view('auth.login')->header('Cache-Control', 'no-cache, no-store');
     }
 
-    public function postLogin(Request $request):RedirectResponse 
+    public function postLogin(Request $request): RedirectResponse
     {
         $validated =  $request->validate([
             'email' => 'required',
             'password' => 'required',
         ]);
 
-        if(Auth::attempt($validated)) {
+        if (Auth::attempt($validated)) {
             return redirect()->route('posts.index');
         }
-        
+
         return back()->withErrors([
             'email' => 'email does not match.',
             'password' => 'password does not match.',
         ]);
     }
 
-    public function register() {
-        return view('auth.register');
+    public function register()
+    {
+        if (Auth::check()) {
+            return redirect()->route('posts.index');
+        }
+        return response()->view('auth.register');
     }
 
-    public function postRegister(Request $request) {
+    public function postRegister(Request $request)
+    {
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password
         ]);
+
+        Mail::to($user->email)->send(new TestMail($user->name));
+        
         return redirect()->route('posts.index')->withSuccess('registered successfully');
     }
 
-    public function logOut(Request $request) {
+    public function logOut()
+    {
         Auth::logout();
         return redirect('login');
     }

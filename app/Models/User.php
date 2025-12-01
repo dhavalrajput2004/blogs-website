@@ -3,12 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+//#[ObservedBy([UserObserver::class])]
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -22,6 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin',
+        'last_activity'
     ];
 
     /**
@@ -42,6 +48,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_admin' => 'boolean',
+        'last_activity' => 'datetime'
     ];
 
     public function posts(): HasMany
@@ -53,4 +61,26 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
+
+    protected function firstName(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => ucfirst($value),
+        );
+    }
+
+    protected function scopeAdmin(Builder $query) 
+    {
+        $query->where('is_admin', true);
+    }
+
+    protected function scopeNormalUser(Builder $query) 
+    {
+        $query->where('is_admin', false);
+    }
+
+   // protected $dispatchesEvents = [
+      //  'saved' => UserSaved::class,
+      //  'deleted' => UserDeleted::class,
+    // ];
 }

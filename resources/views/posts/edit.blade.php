@@ -1,6 +1,6 @@
 @extends('layouts.app')
-
-@section('edit')
+<x-header :user="Auth::user()->name"/>
+@section('main')
 <div class="mx-auto p-2" style="width: 400px;">
     <!-- Well begun is half done. - Aristotle -->
     <h1>Edit Post</h1>
@@ -31,7 +31,7 @@
         </div>
         <div class="form-group" style = "padding: 10px">
             <label for="content">Content</label>
-            <textarea name="body" class="form-control" required> {{$post->body}}</textarea>
+            <textarea id="summernote" name="body" value="{{ old('body') }}">{{ $post->body }}</textarea>
             @error('content')
             <div class="alert alert-danger">{{ $message }}</div>
             @enderror

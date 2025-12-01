@@ -27,7 +27,7 @@ class CommentController extends Controller
         if($post->user_id !== $user->id) {
             abort(403,'not unauthorized to create comment on this post');
         }
-        return view('comments.create', ['post' => $post]);
+        return view('comments.create', ['post' => $post, 'user' => $user]);
     }
 
     /**
@@ -64,7 +64,7 @@ class CommentController extends Controller
         if($post->user_id !== $user->id  || $comment->user_id !== $user->id) {
             abort(403,'not unauthorized to edit comment on this post');
         }
-        return view('comments.edit',['post' => $post, 'comment' => $comment]);
+        return view('comments.edit',['post' => $post, 'comment' => $comment , 'user' => $user]);
     }
 
     /**

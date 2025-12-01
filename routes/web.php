@@ -1,9 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\MailController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +21,7 @@ use App\Http\Controllers\CommentController;
 
 // Route::resource('posts', PostController::class);
 Route::middleware('auth')->group(function () {
+   // Route::get('blogs/search', [BlogController::class, 'search'])->name('blogs.search');
     Route::get('logout', [AuthController::class, 'logOut'])->name('logout');
     
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
@@ -40,7 +45,14 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('login', [AuthController::class, 'index'])->name('login');
-Route::get('register', [AuthController::class, 'register'])->name('register');
-Route::post('login-user',[AuthController::class, 'postLogin'])->name('login.post');
-Route::post('register-user',[AuthController::class, 'postRegister'])->name('register.post');
+    Route::get('login', [AuthController::class, 'index'])->name('login');
+    Route::post('login-user',[AuthController::class, 'postLogin'])->name('login.post');
+    Route::get('register', [AuthController::class, 'register'])->name('register');
+    Route::post('register-user',[AuthController::class, 'postRegister'])->name('register.post');
+
+    Route::get('blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware();
+    Route::get('blogs/{post}', [BlogController::class, 'show'])->name('blog.show');
+
+    Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard')->middleware(['auth', 'admin', 'last_activity']);
+
+    Route::get('/send-email', [MailController::class, 'sendEmail']);

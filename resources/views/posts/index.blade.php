@@ -2,17 +2,7 @@
 
 @section('main')
 <div class= "container">
-<ul class="nav justify-content-end mb-2">
-<li class="nav-item">
-    <a class="nav-link disabled" href="#" >Hello,{{$user->name}}</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="{{ route('posts.create') }}">Create</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link text-white bg-dark" href="{{ route('logout') }}" >LogOut</a>
-  </li>
-</ul>
+  <x-header :user="Auth::user()->name" />
 
 @if($posts)
 <div class="row">

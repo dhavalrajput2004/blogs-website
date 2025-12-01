@@ -1,6 +1,7 @@
 @extends('layouts.app')
     <!-- Well begun is half done. - Aristotle -->
-    @section('create')
+    <x-header :user="Auth::user()->name"/>
+    @section('main')
 <div class="mx-auto p-2" style="width: 400px;">
     <h1>Create Post</h1>
     <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
@@ -28,7 +29,7 @@
         </div>
         <div class="form-group">
             <label for="body">Content</label>
-            <textarea name="body" class="form-control" value="{{ old('body') }}" class="form-control" required></textarea>
+            <textarea id="summernote" name="body">{{ old('body') }}</textarea>
             @error('content')
             <div class="alert alert-danger">{{ $message }}</div>
             @enderror

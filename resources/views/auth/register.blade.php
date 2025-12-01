@@ -6,14 +6,14 @@
         @csrf 
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" name="name" class="form-control" required>
+            <input type="text" name="name" value="{{ old('name') }}" class="form-control" required>
             @error('name')
             <div class="alert alert-danger">{{ $message }}</div>
             @enderror
         </div>
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" name="email" class="form-control" required>
+            <input type="email" name="email" value="{{ old('email') }}" class="form-control" required>
             @error('email')
             <div class="alert alert-danger">{{ $message }}</div>
             @enderror

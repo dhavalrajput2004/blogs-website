@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostCreated;
+use App\Mail\PostCreated as MailPostCreated;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 class PostController extends Controller
 {
@@ -13,9 +17,14 @@ class PostController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
+    { 
+      //  dd(User::admin()->get());
         $user = Auth::user();
-        $posts = Post::where('user_id', $user->id)->get();
+        $posts = Post::where('user_id', $user->id)->paginate(12);
+
+       // Mail::to($user)->send(new MailPostCreated());
+
+       
         return view('posts.index', ['posts' => $posts, 'user' => $user]);
     }
 
@@ -24,12 +33,8 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $user = Auth::user();
-        if ($post->user_id !== $user->id) {
-            abort(403, 'not unauthorized to view this post');
-        }
         $post->load('comments');
-        return view('posts.show', ['post' => $post]);
+        return view('posts.show', ['post' => $post, 'user' => Auth::user()]);
     }
 
     /**
@@ -37,7 +42,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        $user = Auth::user();
+        return view('posts.create', ['user' => $user]);
     }
 
     /**
@@ -66,6 +72,12 @@ class PostController extends Controller
 
         $post->save();
 
+      //  Mail::to(Auth::user())->send(new MailPostCreated());
+
+       // event(new PostCreated($post));
+
+       // PostCreated::dispatch($post);
+
         return redirect()->route('posts.index')->with('success', 'Post created successfully.');
     }
 
@@ -78,7 +90,7 @@ class PostController extends Controller
         if ($post->user_id !== $user->id) {
             abort(403, 'not unauthorized to update this post');
         }
-        return view('posts.edit', ['post' => $post]);
+        return view('posts.edit', ['post' => $post, 'user' => $user]);
     }
 
     /**
