@@ -13,7 +13,7 @@ class PostObserver
      * Handle the Post "created" event.
      */
     public function created(Post $post): void
-    {      dd($post);
+    {     // dd($post);
         // Mail::to(User::find(1206))->send(new PostCreated());
     }
 

@@ -24,8 +24,8 @@ class CommentController extends Controller
     public function create(Post $post)
     {
         $user = Auth::user();
-        if($post->user_id !== $user->id) {
-            abort(403,'not unauthorized to create comment on this post');
+        if ($post->user_id !== $user->id) {
+            abort(403, 'not unauthorized to create comment on this post');
         }
         return view('comments.create', ['post' => $post, 'user' => $user]);
     }
@@ -42,7 +42,6 @@ class CommentController extends Controller
         $comment->comment = $request->comment;
         $comment->post_id = $post->id;
         $comment->user_id = Auth::user()->id;
-        //dd($post);
         $comment->save();
         return redirect()->route('post.show', $post->id)->with('success', 'Comment added successfully.');
     }
@@ -61,10 +60,10 @@ class CommentController extends Controller
     public function edit(Post $post, Comment $comment)
     {
         $user = Auth::user();
-        if($post->user_id !== $user->id  || $comment->user_id !== $user->id) {
-            abort(403,'not unauthorized to edit comment on this post');
+        if ($post->user_id !== $user->id  || $comment->user_id !== $user->id) {
+            abort(403, 'not unauthorized to edit comment on this post');
         }
-        return view('comments.edit',['post' => $post, 'comment' => $comment , 'user' => $user]);
+        return view('comments.edit', ['post' => $post, 'comment' => $comment, 'user' => $user]);
     }
 
     /**
@@ -73,8 +72,8 @@ class CommentController extends Controller
     public function update(Request $request, Post $post, Comment $comment)
     {
         $user = Auth::user();
-        if($post->user_id !== $user->id  || $comment->user_id !== $user->id) {
-            abort(403,'not unauthorized to edit comment on this post');
+        if ($post->user_id !== $user->id  || $comment->user_id !== $user->id) {
+            abort(403, 'not unauthorized to edit comment on this post');
         }
         $request->validate([
             'comment' => 'required|string',
@@ -91,8 +90,8 @@ class CommentController extends Controller
     public function destroy(Post $post, Comment $comment)
     {
         $user = Auth::user();
-        if($post->user_id !== $user->id  || $comment->user_id !== $user->id) {
-            abort(403,'not unauthorized to delete comment on this post');
+        if ($post->user_id !== $user->id  || $comment->user_id !== $user->id) {
+            abort(403, 'not unauthorized to delete comment on this post');
         }
         $comment->delete();
         return redirect()->route('post.show', $post->id)->with('success', 'comment deleted successfully.');

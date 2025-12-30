@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\TestMail;
+use App\Jobs\UserJob;
+use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Post;
-use Illuminate\Support\Facades\Mail;
+use App\Models\User;
 
 class BlogController extends Controller
 {
     public function index()
     {
-       // $name = 'Dhaval';
-      //  Mail::to("mohmmad.husain@bytestechnolab.com")->send(new TestMail($name));
-
         $search = request('search');
+        $categories = Category::all();
 
         if ($search) {
             $posts = Post::search($search)->paginate(12);
@@ -21,16 +21,37 @@ class BlogController extends Controller
             $posts = Post::paginate(12);
         }
 
-
-        return view('blogs.home', ['posts' => $posts]);
+        return view('blogs.home', ['posts' => $posts, 'categories' => $categories]);
     }
 
     public function show(Post $post)
     {
-        //$post->load('comments.user');
-
         $comments = $post->comments()->with('user')->orderBy('id')->paginate(3);
 
+        $post->with('comments', 'tags','likes');
+
         return view('blogs.show', ['post' => $post, 'comments' => $comments]);
+    }
+
+    public function getSuggestions()
+    {
+        $search = request('search');
+
+        $posts = Post::search($search)->with('user')->select('id', 'title', 'image', 'user_id')->get()->take(10);
+        
+        $authors = User::query()->select('name', 'id')->where('name', 'like', '%' . $search . '%')->get()->take(10);
+
+        $comments = Comment::query()->select('comment','post_id')->where('comment', 'like', '%' . $search . '%')->get()->take(5);
+
+        return view('blogs.suggestion', ['posts' => $posts, 'authors' => $authors, 'comments' => $comments]);
+    }
+
+    public function listByAuthor($id)
+    {
+        $categories = Category::select('category_name')->get();
+
+        $posts = Post::where('user_id', $id)->paginate(12);
+
+        return view('blogs.home', ['posts' => $posts, 'categories' => $categories]);
     }
 }

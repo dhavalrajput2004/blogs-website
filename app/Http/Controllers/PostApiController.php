@@ -4,13 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use App\Models\Comment;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
 use Throwable;
 use Exception;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PostApiController extends Controller
@@ -19,10 +16,7 @@ class PostApiController extends Controller
     //
     public function index()
     {
-        try{
-          /*  $postIds = [3,5];
-            $posts = DB::table('posts')->join('comments','posts.id','=','comments.post_id')
-               ->whereIn('posts.id',$postIds)->select('comments.post_id','comments.id as comments_id', 'comments.comment')->get();*/
+        try{   
            $posts = Post::with('comments')->get();
             if($posts->count() == 0) {
                 throw new Exception("No post found", 404);
@@ -40,7 +34,6 @@ class PostApiController extends Controller
             $validated = $request->validate([
                 'title' => 'required|string',
                 'body' => 'required|string',
-                'author' => 'required|string',
                 'image' => 'image|mimes:png,jpg,jpeg'
             ]);
 
@@ -77,7 +70,6 @@ class PostApiController extends Controller
             $validated = $request->validate([
                 'title'  => 'string',
                 'body'   => 'string',
-                'author' => 'string',
                 'image'  => 'image|mimes:png,jpg,jpeg'
             ]);
     
@@ -122,6 +114,5 @@ class PostApiController extends Controller
             return $this->errorResponse($e);
         }
     }
-
     
 }

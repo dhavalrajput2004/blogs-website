@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 //#[ScopedBy([OldScope::class])]
 //#[ObservedBy([PostObserver::class])]
@@ -23,10 +25,24 @@ class Post extends Model
     protected $fillable = [
         'title',
         'body',
-        'author',
         'image',
-        'user_id'
+        'user_id',
+        'category_id'
     ];
+
+    public function likes(): MorphMany
+    {
+        return $this->morphMany(Like::class, 'likeable');
+    }
+
+    public function userLiked($userId) {
+        return $this->likes()->where('user_id', $userId)->first();
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class)->withPivot('tag_id','post_id','created_at', 'updated_at');
+    }
 
     public function comments(): HasMany
     {
@@ -38,12 +54,17 @@ class Post extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     protected function scopeSearch(Builder $query, $search = ''): void
     {
         $query->where('title', 'like', '%' . $search . '%');
     }
 
-    protected $dispatchesEvents = [
-        'created' => PostCreated::class,
-    ];
+    // protected $dispatchesEvents = [
+    //     'created' => PostCreated::class,
+    // ];
 }

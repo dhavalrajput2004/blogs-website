@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -32,6 +33,8 @@ class UserSeeder extends Seeder
 
                 $post->user_id  = $user->id;
 
+                $category  = Category::inRandomOrder()->first();
+                $post->category_id = $category->id;
 
                 $post->save();
 

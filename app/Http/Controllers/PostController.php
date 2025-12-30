@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\PostCreated;
-use App\Mail\PostCreated as MailPostCreated;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Tag;
+use App\Models\Tag_Post;
+use App\Models\TagPost;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Models\User;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rules\Exists;
 
 class PostController extends Controller
 {
@@ -17,14 +19,10 @@ class PostController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    { 
-      //  dd(User::admin()->get());
+    {
         $user = Auth::user();
         $posts = Post::where('user_id', $user->id)->paginate(12);
 
-       // Mail::to($user)->send(new MailPostCreated());
-
-       
         return view('posts.index', ['posts' => $posts, 'user' => $user]);
     }
 
@@ -32,9 +30,10 @@ class PostController extends Controller
      * Display the specified resource.
      */
     public function show(Post $post)
-    {
-        $post->load('comments');
-        return view('posts.show', ['post' => $post, 'user' => Auth::user()]);
+    {  
+        $post->with('comments','tags');
+
+        return view('posts.show', ['post' => $post]);
     }
 
     /**
@@ -43,7 +42,9 @@ class PostController extends Controller
     public function create()
     {
         $user = Auth::user();
-        return view('posts.create', ['user' => $user]);
+        $categories = Category::all();
+
+        return view('posts.create', ['user' => $user, 'categories' => $categories]);
     }
 
     /**
@@ -53,30 +54,33 @@ class PostController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:20',
-            'author' => 'required|string',
             'body' => 'required|string',
-            'image' => 'image|mimes:png,jpg,jpeg'
+            'image' => 'image|mimes:png,jpg,jpeg',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         $post = new Post();
         $post->title = $request->title;
-        $post->author = $request->author;
         $post->body = $request->body;
         $post->user_id = Auth::user()->id;
+        $post->category_id = $request->category_id;
 
         $path = $request->file('image')->store('images', 'public');
-
-        // $path = Storage::disk('public')->put('images', $request->file('image'));
 
         $post->image = $path;
 
         $post->save();
 
-      //  Mail::to(Auth::user())->send(new MailPostCreated());
+        $tags = explode(',', $request->tags);
 
-       // event(new PostCreated($post));
+        foreach ($tags as $tag) {
 
-       // PostCreated::dispatch($post);
+            $tag  = Tag::query()->firstOrCreate([
+                'tag_name' => $tag,
+            ]);
+
+            $post->tags()->attach($tag->id);
+        }
 
         return redirect()->route('posts.index')->with('success', 'Post created successfully.');
     }
@@ -90,7 +94,9 @@ class PostController extends Controller
         if ($post->user_id !== $user->id) {
             abort(403, 'not unauthorized to update this post');
         }
-        return view('posts.edit', ['post' => $post, 'user' => $user]);
+        $categories = Category::all();
+
+        return view('posts.edit', ['post' => $post, 'user' => $user, 'categories' => $categories]);
     }
 
     /**
@@ -105,14 +111,14 @@ class PostController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'author' => 'required|string',
             'body' => 'required',
-            'image' => 'image|mimes:png,jpg,jpeg'
+            'image' => 'image|mimes:png,jpg,jpeg',
+            'category_id' => 'required|exists:categories,id'
         ]);
 
         $post->title = $request->title;
-        $post->author = $request->author;
         $post->body = $request->body;
+        $post->category_id = $request->category_id;
 
         if ($request->hasFile('image')) {
             if ($post->image && Storage::disk('public')->exists($post->image)) {
@@ -122,6 +128,20 @@ class PostController extends Controller
             $path = $request->file('image')->store('images', 'public');
             $post->image = $path;
         }
+
+        $post->tags()->detach();
+
+        $tags = explode(',', $request->tags);
+ 
+        foreach ($tags as $tag) {
+
+            $tag  = Tag::query()->firstOrCreate([
+                'tag_name' => $tag,
+            ]);
+
+           $post->tags()->attach($tag->id);
+        }
+
         $post->save();
 
         return redirect()->route('posts.index')->with('success', 'Post updated successfully.');
@@ -134,7 +154,7 @@ class PostController extends Controller
     {
         $user = Auth::user();
         if ($post->user_id !== $user->id) {
-            abort(403, 'not unauthorized to view this post');
+            abort(403, 'unauthorized to view this post');
         }
 
         if ($post->image && Storage::disk('public')->exists($post->image)) {

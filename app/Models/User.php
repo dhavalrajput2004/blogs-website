@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 //#[ObservedBy([UserObserver::class])]
@@ -27,7 +28,8 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
-        'last_activity'
+        'last_activity',
+        'phone_number'
     ];
 
     /**
@@ -62,13 +64,6 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    protected function firstName(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value) => ucfirst($value),
-        );
-    }
-
     protected function scopeAdmin(Builder $query) 
     {
         $query->where('is_admin', true);
@@ -83,4 +78,20 @@ class User extends Authenticatable
       //  'saved' => UserSaved::class,
       //  'deleted' => UserDeleted::class,
     // ];
+
+    protected function phoneNumber(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => decrypt($value),
+            set: fn (string $value) => encrypt($value)
+        );
+    }
+
+    public function getFullNameAttribute() {
+        return $this->attributes['name'];
+    }
+
+  //  public function setFullNameAttrbute($value) {
+   //     $this->atttrbutes['name'] = $value;
+  //  }
 }

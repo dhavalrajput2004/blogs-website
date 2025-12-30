@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\TestMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -57,8 +55,6 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => $request->password
         ]);
-
-        Mail::to($user->email)->send(new TestMail($user->name));
         
         return redirect()->route('posts.index')->withSuccess('registered successfully');
     }

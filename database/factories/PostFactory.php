@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Models\Comment;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Faker\Generator as Faker; 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Post>
@@ -22,14 +22,23 @@ class PostFactory extends Factory
     protected $model = Post::class;
 
     public function definition(): array
-    {
-        //$user = User::id->first();
+    { 
+        $fileNames = ['1.jpeg', '2.jpeg' , '3.png', '4.jpeg'];
+
+        $fileName = Arr::random($fileNames);
+
+        $arr = explode('.',$fileName);
+
+        $newName = Str::random().'.'.end($arr);
+
+        $fileContents = Storage::disk('main')->get("test/$fileName");
+
+        Storage::disk('public')->put('images'.'/' . $newName, $fileContents);
+
         return [
             'title' => fake()->text,
             'body' => fake()->randomHtml(10),
-            'author' => fake()->firstName,
-            'image' => fake()->imageUrl(),
-            //'image' => "public/storage/images/8PMVJLVRoBPyrsGXhOgBWQ5fd7cT3tCV1gaGpPK1.jpg",
+            'image' => "images/$newName",
         ];
     }
 }

@@ -7,6 +7,9 @@ use App\Observers\PostObserver;
 use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event as FacadesEvent;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -27,7 +30,12 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Paginator::useBootstrapFive();
-
+        
         Post::observe(PostObserver::class);
+
+
+        Cache::remember('users', 60 , function() {
+         return Auth::user();
+         });
     }
 }

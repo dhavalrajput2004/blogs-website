@@ -3,26 +3,26 @@
     <!-- He who is contented is rich. - Laozi -->
     <h1>Register</h1>
     <form method="POST" action="{{ route('register.post') }}" enctype="multipart/form-data">
-        @csrf 
+        @csrf
         <div class="form-group">
             <label for="name">Name</label>
             <input type="text" name="name" value="{{ old('name') }}" class="form-control" required>
             @error('name')
-            <div class="alert alert-danger">{{ $message }}</div>
+                <div class="alert alert-danger">{{ $message }}</div>
             @enderror
         </div>
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" name="email" value="{{ old('email') }}" class="form-control" required>
             @error('email')
-            <div class="alert alert-danger">{{ $message }}</div>
+                <div class="alert alert-danger">{{ $message }}</div>
             @enderror
         </div>
         <div class="form-group">
             <label for="passsword">Password</label>
             <input type = "password" name="password" class="form-control" required>
             @error('password')
-            <div class="alert alert-danger">{{ $message }}</div>
+                <div class="alert alert-danger">{{ $message }}</div>
             @enderror
         </div>
 

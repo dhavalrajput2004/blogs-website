@@ -9,7 +9,6 @@ use App\Models\Comment;
 use App\Traits\ApiResponse;
 use Throwable;
 use Exception;
-use Illuminate\Validation\Rule;
 
 class CommentApiController extends Controller
 {
