@@ -1,5 +1,4 @@
-
-    <div class="row">
+   <div class="row">
         <div class="col-6">
             @foreach ($posts as $post)
                 <div class="d-flex mb-2">
@@ -25,7 +24,6 @@
             @endforeach
       
             <div>
-                <p>Comments</p>
                 @foreach ($comments as $comment)
                 <a class= "text-decoration-none link-secondary" href="{{ route('blog.show', $comment->post_id )}}">
                     <p class= "col-8 text-truncate"> {{ $comment->comment }}</p>

@@ -13,7 +13,7 @@ class BlogController extends Controller
     public function index()
     {
         $search = request('search');
-        $categories = Category::all();
+        $categories = Category::select('category_name')->get();
 
         if ($search) {
             $posts = Post::search($search)->paginate(12);
@@ -37,11 +37,11 @@ class BlogController extends Controller
     {
         $search = request('search');
 
-        $posts = Post::search($search)->with('user')->select('id', 'title', 'image', 'user_id')->get()->take(10);
+        $posts = Post::search($search)->with('user')->select('id', 'title', 'image', 'user_id')->take(10)->get();
         
-        $authors = User::query()->select('name', 'id')->where('name', 'like', '%' . $search . '%')->get()->take(10);
+        $authors = User::query()->select('name', 'id')->where('name', 'like', '%' . $search . '%')->take(5)->get();
 
-        $comments = Comment::query()->select('comment','post_id')->where('comment', 'like', '%' . $search . '%')->get()->take(5);
+        $comments = Comment::query()->select('comment','post_id')->where('comment', 'like', '%' . $search . '%')->take(5)->get();
 
         return view('blogs.suggestion', ['posts' => $posts, 'authors' => $authors, 'comments' => $comments]);
     }

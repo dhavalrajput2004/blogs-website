@@ -24,7 +24,7 @@ use App\Http\Controllers\TagController;
 
 // Route::resource('posts', PostController::class);
 Route::middleware('auth')->group(function () {
-   // Route::get('blogs/search', [BlogController::class, 'search'])->name('blogs.search');
+
     Route::get('logout', [AuthController::class, 'logOut'])->name('logout');
 
     Route::get('manage/categories', [CategoryController::class, 'index'])->name('category.index');
@@ -43,8 +43,6 @@ Route::middleware('auth')->group(function () {
     Route::put('posts/{post}', [PostController::class, 'update'])->name('post.update');
     Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('post.destroy');
 
-    // Route::resource('comments', CommentController::class);
-
     Route::get('posts/{post}/comments', [CommentController::class, 'create'])->name('comments.create');
     Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
 
@@ -54,26 +52,29 @@ Route::middleware('auth')->group(function () {
     Route::delete('posts/{post}/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
 
+Route::get('/', function() { 
+    return redirect()->to('blogs'); 
+});
 
-    Route::get('login', [AuthController::class, 'index'])->name('login');
-    Route::post('login-user',[AuthController::class, 'postLogin'])->name('login.post');
-    Route::get('register', [AuthController::class, 'register'])->name('register');
-    Route::post('register-user',[AuthController::class, 'postRegister'])->name('register.post');
+Route::get('login', [AuthController::class, 'index'])->name('login');
+Route::post('login-user', [AuthController::class, 'postLogin'])->name('login.post');
+Route::get('register', [AuthController::class, 'register'])->name('register');
+Route::post('register-user', [AuthController::class, 'postRegister'])->name('register.post');
 
-    Route::get('blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware();
-    Route::get('blogs/{post}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware();
+Route::get('blogs/{post}', [BlogController::class, 'show'])->name('blog.show');
 
-    Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard')->middleware(['auth', 'admin', 'last_activity']);
+Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard')->middleware(['auth', 'admin', 'last_activity']);
 
-    Route::get('/send-email', [MailController::class, 'sendEmail']);
-    Route::get('/test', [MailController::class, 'sendEmail']);
+Route::get('/send-email', [MailController::class, 'sendEmail']);
+Route::get('/test', [MailController::class, 'sendEmail']);
 
-    Route::get('categories/{category_name}', [CategoryController::class, 'show'])->name('category.show');
-    Route::get('tags/{tag_name}', [TagController::class, 'show'])->name('tag.show');
+Route::get('categories/{category_name}', [CategoryController::class, 'show'])->name('category.show');
+Route::get('tags/{tag_name}', [TagController::class, 'show'])->name('tag.show');
 
-    Route::post('blogs/{post}/updateLikes', [LikeController::class, 'updateLikes'])->name('post.likes');
-    Route::post('blogs/{comment}/updateCommentLikes', [LikeController::class, 'updateCommentLikes'])->name('comment.likes');
+Route::post('blogs/{post}/updateLikes', [LikeController::class, 'updateLikes'])->name('post.likes');
+Route::post('blogs/{comment}/updateCommentLikes', [LikeController::class, 'updateCommentLikes'])->name('comment.likes');
 
-    Route::get('getsuggestions', [BlogController::class, 'getSuggestions'])->name('blogs.suggestions');
+Route::get('getsuggestions', [BlogController::class, 'getSuggestions'])->name('blogs.suggestions');
 
-    Route::get('authors/{author}', [BlogController::class, 'listByAuthor'])->name('blog.author');
+Route::get('authors/{author}', [BlogController::class, 'listByAuthor'])->name('blog.author');

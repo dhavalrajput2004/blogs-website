@@ -44,10 +44,23 @@
                    const resultbox = document.getElementById("result-box");
 
                    searchbox.onkeyup = function() {
-                       let suggestions = [];
-                       let input = searchbox.value;
-                       console.log(input);
+                       getSuggestions(searchbox.value);
+                   }
 
+                   const getSuggestions = debounce(fetch, 500)
+
+                   function debounce(fn, delay) {
+                       let timeout
+
+                       return (...args) => {
+                           clearTimeout(timeout)
+                           timeout = setTimeout(() => {
+                               fn(...args)
+                           }, delay);
+                       }
+                   }
+
+                   function fetch(input) {
                        if (input.trim() !== '') {
                            resultbox.style.display = "block";
 
@@ -59,7 +72,6 @@
                                },
                                dataType: 'html',
                                success: function(res) {
-                                console.log(res)
                                    $("#result-box").html(res);
                                },
                                error: function(error) {
@@ -70,7 +82,7 @@
                            resultbox.style.display = "none";
                        }
                    }
-
+                   
                });
            </script>
        @endif

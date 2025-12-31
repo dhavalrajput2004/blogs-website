@@ -8,7 +8,7 @@
             <div class="mb-4">
                 @foreach ($categories as $category)
                     <a href="{{ route('category.show', $category->category_name) }}"
-                        class="btn {{ request()->is(route('category.show', $category->category_name)) ? 'btn-primary' : 'btn-outline-primary' }}">
+                        class="{{ request()->is(route('category.show', $category->category_name)) ? 'btn btn-primary' : 'btn btn-outline-primary' }}">
                         {{ $category->category_name }}</a>
                 @endforeach
             </div>
