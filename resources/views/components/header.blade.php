@@ -7,6 +7,9 @@
                    <a class="nav-link disabled" href="#">Hello,{{ $user }}</a>
                </li>
                <li class="nav-item">
+                   <a class="nav-link" href="{{ route('myprofile') }}">My Profile</a>
+               </li>
+               <li class="nav-item">
                    <a class="nav-link" href="{{ route('posts.create') }}">Create Post</a>
                </li>
                <li class="nav-item">
@@ -82,7 +85,7 @@
                            resultbox.style.display = "none";
                        }
                    }
-                   
+
                });
            </script>
        @endif

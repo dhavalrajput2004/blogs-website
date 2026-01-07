@@ -6,7 +6,7 @@
       <div class="mx-auto p-2 border-dark" style="width: 800px;">
           <h2>{{ $post->title }}</h2>
 
-          <p>Author: {{ $post->user->name }}</p>
+          <p>Author: <a class="link-dark" href="{{ route('blog.author', $post->user->id) }}" >{{ $post->user->name }}</a> </p>
           <p>Tags:
             @foreach ($post->tags as $tag)
             <a href="{{ route('tag.show', $tag->tag_name) }}" class="btn btn-primary">

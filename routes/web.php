@@ -10,6 +10,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,9 @@ Route::middleware('auth')->group(function () {
     Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])->name('category.edit');
     Route::put('categories/{category}', [CategoryController::class, 'update'])->name('category.update');
     Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
+
+    Route::get('manage/myprofile', [UserController::class, 'index'])->name('myprofile');
+    Route::put('profile/save', [UserController::class, 'update'])->name('updateprofile');
 
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
     Route::post('posts', [PostController::class, 'store'])->name('posts.store');
@@ -78,3 +82,7 @@ Route::post('blogs/{comment}/updateCommentLikes', [LikeController::class, 'updat
 Route::get('getsuggestions', [BlogController::class, 'getSuggestions'])->name('blogs.suggestions');
 
 Route::get('authors/{author}', [BlogController::class, 'listByAuthor'])->name('blog.author');
+
+Route::post('blogs/{user}/handleFollow', [BlogController::class, 'handleFollow'])->name('handleFollow');
+
+Route::get('test123', [BlogController::class, 'test'])->name('test');

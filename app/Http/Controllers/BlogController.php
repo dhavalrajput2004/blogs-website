@@ -7,9 +7,29 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class BlogController extends Controller
 {
+    public function test()
+    {
+
+        $users = User::avg('id');
+
+        if (Post::where('category_id', 2)->exists()) {
+            $flag = 'posts exist';
+        } else {
+            $flag = 'post not xist';
+        }
+
+        return view('test', compact('users', 'flag'));
+    }
+
+    public function handleFollow() {
+        $userId  = Auth::id();
+        
+    }
+
     public function index()
     {
         $search = request('search');
@@ -28,7 +48,7 @@ class BlogController extends Controller
     {
         $comments = $post->comments()->with('user')->orderBy('id')->paginate(3);
 
-        $post->with('comments', 'tags','likes');
+        $post->with('comments', 'tags', 'likes');
 
         return view('blogs.show', ['post' => $post, 'comments' => $comments]);
     }
@@ -38,20 +58,22 @@ class BlogController extends Controller
         $search = request('search');
 
         $posts = Post::search($search)->with('user')->select('id', 'title', 'image', 'user_id')->take(10)->get();
-        
+
         $authors = User::query()->select('name', 'id')->where('name', 'like', '%' . $search . '%')->take(5)->get();
 
-        $comments = Comment::query()->select('comment','post_id')->where('comment', 'like', '%' . $search . '%')->take(5)->get();
+        $comments = Comment::query()->select('comment', 'post_id')->where('comment', 'like', '%' . $search . '%')->take(5)->get();
 
         return view('blogs.suggestion', ['posts' => $posts, 'authors' => $authors, 'comments' => $comments]);
     }
 
     public function listByAuthor($id)
     {
+        $user = User::find($id);
+
         $categories = Category::select('category_name')->get();
 
         $posts = Post::where('user_id', $id)->paginate(12);
 
-        return view('blogs.home', ['posts' => $posts, 'categories' => $categories]);
+        return view('blogs.home', ['posts' => $posts, 'categories' => $categories, 'user' => $user]);
     }
 }
