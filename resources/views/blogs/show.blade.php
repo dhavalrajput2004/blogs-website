@@ -90,11 +90,9 @@
                           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                       },
                       success: function(res) {
-                          console.log(res)
-                          $('#like-count').text(res.likes)
-
-                          var icon = '#like-icon';
-                          toggleIcon(icon, res.status)
+                           console.log(res)
+                           $('#like-count').text(res.likes)
+                           toggleIcon('#like-icon', res.status)
                       },
                       error: function(status, error) {
                           console.error("An error occurred: " + status + " " + error)

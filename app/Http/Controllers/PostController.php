@@ -6,12 +6,8 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Tag;
-use App\Models\Tag_Post;
-use App\Models\TagPost;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rules\Exists;
 
 class PostController extends Controller
 {

@@ -28,32 +28,36 @@ Route::middleware('auth')->group(function () {
 
     Route::get('logout', [AuthController::class, 'logOut'])->name('logout');
 
-    Route::get('manage/categories', [CategoryController::class, 'index'])->name('category.index');
+    Route::get('admin/categories', [CategoryController::class, 'index'])->name('category.index');
 
     Route::post('categories', [CategoryController::class, 'store'])->name('category.store');
-    Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])->name('category.edit');
+    Route::get('admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('category.edit');
     Route::put('categories/{category}', [CategoryController::class, 'update'])->name('category.update');
     Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
 
-    Route::get('manage/myprofile', [UserController::class, 'index'])->name('myprofile');
-    Route::put('profile/save', [UserController::class, 'update'])->name('updateprofile');
+    Route::get('admin/myprofile', [UserController::class, 'index'])->name('myprofile');
+    Route::put('profile/{user}', [UserController::class, 'update'])->name('updateprofile');
 
-    Route::get('posts', [PostController::class, 'index'])->name('posts.index');
+    Route::get('admin/posts', [PostController::class, 'index'])->name('posts.index');
     Route::post('posts', [PostController::class, 'store'])->name('posts.store');
-    Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
-    Route::get('posts/{post}', [PostController::class, 'show'])->name('post.show');
+    Route::get('admin/posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::get('admin/posts/{post}', [PostController::class, 'show'])->name('post.show');
 
-    Route::get('posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::get('admin/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
     Route::put('posts/{post}', [PostController::class, 'update'])->name('post.update');
     Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('post.destroy');
 
-    Route::get('posts/{post}/comments', [CommentController::class, 'create'])->name('comments.create');
+    Route::get('admin/posts/{post}/comments', [CommentController::class, 'create'])->name('comments.create');
     Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
 
-    Route::get('posts/{post}/comments/{comment}', [CommentController::class, 'edit'])->name('comments.edit');
+    Route::get('admin/posts/{post}/comments/{comment}', [CommentController::class, 'edit'])->name('comments.edit');
     Route::put('posts/{post}/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
 
     Route::delete('posts/{post}/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+
+    Route::post('handleAdminFollow/{user}', [UserController::class, 'handleAdminFollow'])->name('handleAdminFollow');
+    Route::get('getAdminFollowers', [UserController::class, 'getFollowers'])->name('getFollowers');
+    Route::get('getAdminFollowings', [UserController::class, 'getFollowing'])->name('getFollowing');
 });
 
 Route::get('/', function() { 
@@ -83,6 +87,6 @@ Route::get('getsuggestions', [BlogController::class, 'getSuggestions'])->name('b
 
 Route::get('authors/{author}', [BlogController::class, 'listByAuthor'])->name('blog.author');
 
-Route::post('blogs/{user}/handleFollow', [BlogController::class, 'handleFollow'])->name('handleFollow');
+Route::post('{user}/handleFollow', [UserController::class, 'handleFollow'])->name('handleFollow');
 
 Route::get('test123', [BlogController::class, 'test'])->name('test');

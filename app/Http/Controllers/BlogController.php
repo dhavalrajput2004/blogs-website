@@ -25,11 +25,6 @@ class BlogController extends Controller
         return view('test', compact('users', 'flag'));
     }
 
-    public function handleFollow() {
-        $userId  = Auth::id();
-        
-    }
-
     public function index()
     {
         $search = request('search');

@@ -25,7 +25,7 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($validated)) {
-            return redirect()->route('posts.index');
+            return redirect()->route('blogs.index');
         }
 
         return back()->withErrors([
