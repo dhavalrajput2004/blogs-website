@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('main')
+<x-header />
     <div class= "container mt-4">
 
         <h3>Categories</h3>

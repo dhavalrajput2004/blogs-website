@@ -62,6 +62,8 @@
                                 data-bs-target="#exampleModal"> Follow
                             </button>
                         @endauth
+                    @else 
+                    <a class="btn btn-primary" href="{{ route('myprofile') }}">Edit Profile</a>
                     @endif
                 </div>
                 <div class="col col-2">
