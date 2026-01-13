@@ -8,6 +8,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
@@ -29,6 +30,8 @@ class BlogController extends Controller
     {
         $search = request('search');
         $categories = Category::select('category_name')->get();
+        $trendPosts = Post::withCount('likes','comments')
+        ->orderByDesc(DB::raw('likes_count + comments_count'))->limit(10)->get();
 
         if ($search) {
             $posts = Post::search($search)->paginate(12);
@@ -36,7 +39,7 @@ class BlogController extends Controller
             $posts = Post::paginate(12);
         }
 
-        return view('blogs.home', ['posts' => $posts, 'categories' => $categories]);
+        return view('blogs.home', ['posts' => $posts, 'categories' => $categories, 'trendposts' => $trendPosts]);
     }
 
     public function show(Post $post)

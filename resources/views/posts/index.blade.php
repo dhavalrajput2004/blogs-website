@@ -5,10 +5,10 @@
         <x-header :user="Auth::user()->name" />
     @endif
 
-    @if ($posts)
+    @if (count($posts)>0)
         <div class="row">
             @foreach ($posts as $post)
-                <div class="col-12 col-md-3 mb-4 ">
+                <div class="col-12 col-md-4 mb-4 ">
                     <div class="card" style="width: 18rem;">
                         <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top" alt="post_image">
 

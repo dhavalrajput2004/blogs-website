@@ -2,7 +2,9 @@
 <!-- Well begun is half done. - Aristotle -->
 @section('main')
     <x-header :user="Auth::user()->name" />
-        <link rel="stylesheet" href="{{ asset('js/inputTags.css') }}">
+        
+    <link rel="stylesheet" href="{{ asset('js/inputTags.css') }}">
+    
     <div class="mx-auto p-2" style="width: 800px;">
         <h1>Create Post</h1>
 
@@ -66,6 +68,5 @@
                 only: false
             },
         });
-
     </script>
 @endsection

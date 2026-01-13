@@ -62,8 +62,8 @@
                                 data-bs-target="#exampleModal"> Follow
                             </button>
                         @endauth
-                    @else 
-                    <a class="btn btn-primary" href="{{ route('myprofile') }}">Edit Profile</a>
+                    @else
+                        <a class="btn btn-primary" href="{{ route('myprofile') }}">Edit Profile</a>
                     @endif
                 </div>
                 <div class="col col-2">
@@ -80,46 +80,86 @@
 
             <div class="row">
                 <div class="col col-8">
-                    <p class="fw-bold"> Bio : {{ $user->bio }} </p>
+                    <p class="fw-bold"> Bio : {!! $user->bio !!} </p>
                 </div>
             </div>
         </div>
     @endif
 
-    <div class= "container mt-4">
-        <!-- No surplus words or unnecessary actions. - Marcus Aurelius -->
-        @if ($categories)
-            <div class="mb-4" id="category-nav">
-                @foreach ($categories as $category)
-                    <a id = "category-{{ $category->id }}" href="{{ route('category.show', $category->category_name) }}"
-                        class="btn btn-outline-primary">
-                        {{ $category->category_name }}</a>
-                @endforeach
-            </div>
+    <div class= "d-flex align-items-start">
+        @if (isset($trendposts))
+            <table class="table-followers">
+                <tbody>
+                    <th> Trending Posts </th>
+                    @foreach ($trendposts as $post)
+                        <tr>
+                            <td>
+                                <img src="{{ asset('storage/' . $post->image) }}" height="60"
+                                    class="rounded-circle mb-3">
+                            </td>
+
+                            <td>
+                                <a class="link-dark" href="{{ route('blog.show', $post) }}">
+                                    <p class="text-truncate" style="max-width: 250px;"> {{ $post->title }} </p>
+                                </a>
+                                <div> <a class="link-dark text-truncate col-2"
+                                        href="{{ route('blog.author', $post->user->id) }}">
+                                        {{ $post->user->name }} </a> </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         @endif
 
-        @if (count($posts) > 0)
-            <div class="row">
-                @foreach ($posts as $post)
-                    <div class="col-12 col-md-4 mb-4 ">
-                        <div class="card border-dark" style="width: 21rem;">
-                            <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top" alt="post_image">
+        <div class= "container mt-4">
+            @if (isset($categories))
+                <div class="mb-4" id="category-nav">
+                    @foreach ($categories as $category)
+                        <a id = "category-{{ $category->id }}"
+                            href="{{ route('category.show', $category->category_name) }}" class="btn btn-outline-primary">
+                            {{ $category->category_name }}</a>
+                    @endforeach
+                </div>
+            @endif
 
-                            <div class="card-body">
-                                <h5 class="card-text col-20 text-truncate">{{ $post->title }}</h5>
-                                <a href="{{ route('blog.show', $post->id) }}" class="btn btn-primary">
-                                    <i class="fa fa-external-link-square" aria-hidden="true"></i>
-                                </a>
+            @if (count($posts) > 0)
+                <div class="row">
+                    @foreach ($posts as $post)
+                        <div class="col-12 col-md-4 mb-4 ">
+                            <div class="card border-dark" style="width: 21rem;">
+                                <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top" alt="post_image">
+
+                                <div class="card-body">
+                                    <h5 class="card-text col-20 text-truncate">{{ $post->title }}</h5>
+                                    <a href="{{ route('blog.show', $post->id) }}" class="btn btn-primary">
+                                        <i class="fa fa-external-link-square" aria-hidden="true"></i>
+                                    </a>
+                                    @if (Route::is('posts.index'))
+                                        <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-primary">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </a>
+                                        <form action="{{ route('post.destroy', $post->id) }}" method="POST"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Are you sure you want to delete this post?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
 
-                {{ $posts->links() }}
-            </div>
-        @else
-            <h1 class="text-center"> No Post Found </h1>
-        @endif
+                    {{ $posts->links() }}
+                </div>
+            @else
+                <h1 class="text-center"> No Post Found </h1>
+            @endif
+        </div>
     </div>
 
     @if (isset($user))
@@ -230,10 +270,10 @@
     <script>
         const navLinks = document.querySelectorAll('#category-nav a');
         navLinks.forEach(link => {
-            
+
             if (link.href === window.location.href) {
-                $(link).removeClass('btn btn-outline-primary'); 
-                $(link).addClass('btn btn-primary'); 
+                $(link).removeClass('btn btn-outline-primary');
+                $(link).addClass('btn btn-primary');
             }
         })
     </script>

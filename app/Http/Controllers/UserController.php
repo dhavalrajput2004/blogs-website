@@ -37,7 +37,7 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('posts.index')->with('success', 'Profile updated successfully.');
+        return redirect()->route('blog.author',$user)->with('success', 'Profile updated successfully.');
     }
 
     public function getFollowing()

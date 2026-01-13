@@ -19,7 +19,7 @@ class PostController extends Controller
         $user = Auth::user();
         $posts = Post::where('user_id', $user->id)->paginate(12);
 
-        return view('posts.index', ['posts' => $posts, 'user' => $user]);
+        return view('blogs.home', ['posts' => $posts, 'user' => $user]);
     }
 
     /**

@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::get('admin/posts/{post}', [PostController::class, 'show'])->name('post.show');
 
     Route::get('admin/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('posts/comments/', [CommentController::class, 'update'])->name('comments.update');
     Route::put('posts/{post}', [PostController::class, 'update'])->name('post.update');
     Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('post.destroy');
 
@@ -51,7 +52,6 @@ Route::middleware('auth')->group(function () {
     Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
 
     Route::get('admin/posts/{post}/comments/{comment}', [CommentController::class, 'edit'])->name('comments.edit');
-    Route::put('posts/{post}/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
 
     Route::delete('posts/{post}/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
@@ -89,4 +89,4 @@ Route::get('authors/{author}', [BlogController::class, 'listByAuthor'])->name('b
 
 Route::post('{user}/handleFollow', [UserController::class, 'handleFollow'])->name('handleFollow');
 
-Route::get('test123', [BlogController::class, 'test'])->name('test');
+Route::get('test123', [BlogController::class, 'test'])->name('test');       

@@ -7,10 +7,11 @@
         <h1>{{ $post->title }}</h1>
 
         <p>Tags:
-        @foreach ($post->tags as $tag)
-        <a href="{{ route('tag.show', $tag->tag_name) }}" class="btn btn-primary">
-            {{ $tag->tag_name }}</a>
-        @endforeach </p>
+            @foreach ($post->tags as $tag)
+                <a href="{{ route('tag.show', $tag->tag_name) }}" class="btn btn-primary">
+                    {{ $tag->tag_name }}</a>
+            @endforeach
+        </p>
 
         <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top" />
         <p>Author:{{ $post->user->name }}</p>
@@ -72,7 +73,11 @@
 
             function showForm() {
                 var form = document.getElementById("addCommentForm");
-                form.style.display = "block";
+                if (form.style.display === "block") {
+                    form.style.display = "none"
+                } else {
+                    form.style.display = "block"
+                }
             }
         })
     </script>

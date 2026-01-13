@@ -6,7 +6,6 @@
                <img src="{{ asset('image.png') }}" alt="Logo" height="60">
            </a>
            @auth
-               <a class="nav-link" href="{{ route('blog.author', auth()->id()) }}">My Profile</a>
                <a class="nav-link" href="{{ route('posts.index') }}">My Posts</a>
                <a class="nav-link" href="{{ route('blogs.index') }}">All Posts</a>
                <a class="nav-link" href="{{ route('posts.create') }}">Create Post</a>
