@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('post.destroy');
 
     Route::get('admin/posts/{post}/comments', [CommentController::class, 'create'])->name('comments.create');
-    Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::post('posts/comments/store', [CommentController::class, 'store'])->name('comments.store');
 
     Route::get('admin/posts/{post}/comments/{comment}', [CommentController::class, 'edit'])->name('comments.edit');
 
@@ -72,7 +72,7 @@ Route::post('register-user', [AuthController::class, 'postRegister'])->name('reg
 Route::get('blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware();
 Route::get('blogs/{post}', [BlogController::class, 'show'])->name('blog.show');
 
-Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard')->middleware(['auth', 'admin', 'last_activity']);
+Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard')->middleware(['auth', 'last_activity']);
 
 Route::get('/send-email', [MailController::class, 'sendEmail']);
 Route::get('/test', [MailController::class, 'sendEmail']);
@@ -90,3 +90,5 @@ Route::get('authors/{author}', [BlogController::class, 'listByAuthor'])->name('b
 Route::post('{user}/handleFollow', [UserController::class, 'handleFollow'])->name('handleFollow');
 
 Route::get('test123', [BlogController::class, 'test'])->name('test');       
+
+Route::get('loadComments', [CommentController::class, 'loadReplies'])->name('loadReplies');

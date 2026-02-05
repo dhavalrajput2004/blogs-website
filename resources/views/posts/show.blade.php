@@ -23,8 +23,9 @@
         <h3>Comments</h3>
         <button id = "addComment" class="btn btn-primary">Add</button>
 
-        <form id = "addCommentForm" style="display:none" method="POST" action="{{ route('comments.store', $post->id) }}">
+        <form id = "addCommentForm" style="display:none" method="POST" action="{{ route('comments.store') }}">
             @csrf
+            <input type="hidden" name="post_id" value="{{ $post->id}}">
             <label for="content">Comment</label>
             <textarea name="comment" class="form-control" required></textarea>
 

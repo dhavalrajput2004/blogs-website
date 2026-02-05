@@ -33,17 +33,20 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request,Post $post)
+    public function store(Request $request)
     {
         $request->validate([
             'comment' => 'required|string',
+            'parent_id' => 'exists:comments,id'
         ]);
+
         $comment = new Comment();
         $comment->comment = $request->comment;
-        $comment->post_id = $post->id;
+        $comment->post_id = $request->post_id;
+        $comment->parent_id = $request->parent_id;
         $comment->user_id = Auth::user()->id;
         $comment->save();
-        return redirect()->route('blog.show', $post->id)->with('success', 'Comment added successfully.');
+        return redirect()->back()->with('success', 'Comment added successfully.');
     }
 
     /**
@@ -89,7 +92,7 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post, Comment $comment)
+    public function destroy(Comment $comment)
     {
         $user = Auth::user();
         if ($comment->user_id !== $user->id) {
@@ -97,5 +100,30 @@ class CommentController extends Controller
         }
         $comment->delete();
         return redirect()->back()->with('success', 'comment deleted successfully.');
+    }
+
+    public function loadReplies()
+    {
+        $postId = request('post_id');
+        $commentId = request('comment_id');
+        $offset = request('offset');
+        $hasnextPage = true;
+
+        $query = Comment::where('post_id', $postId)
+            ->where('parent_id', $commentId);
+   
+        $totalReplies = $query->count();
+
+        $replies = $query->orderByDesc('created_at')
+            ->offset($offset)->limit(1)->get();
+
+        if(($offset +1) >= $totalReplies) {
+            $hasnextPage = false;   
+        }
+
+        return response()->json([
+            'next' => $hasnextPage,
+            'html' => view('partials.replies', compact('replies','postId'))->render()
+        ]);
     }
 }

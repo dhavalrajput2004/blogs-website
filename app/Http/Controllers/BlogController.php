@@ -12,26 +12,12 @@ use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
-    public function test()
-    {
-
-        $users = User::avg('id');
-
-        if (Post::where('category_id', 2)->exists()) {
-            $flag = 'posts exist';
-        } else {
-            $flag = 'post not xist';
-        }
-
-        return view('test', compact('users', 'flag'));
-    }
-
     public function index()
     {
         $search = request('search');
         $categories = Category::select('category_name')->get();
-        $trendPosts = Post::withCount('likes','comments')
-        ->orderByDesc(DB::raw('likes_count + comments_count'))->limit(10)->get();
+        $trendPosts = Post::withCount('likes', 'comments')
+            ->orderByDesc(DB::raw('likes_count + comments_count'))->limit(10)->get();
 
         if ($search) {
             $posts = Post::search($search)->paginate(12);
@@ -44,9 +30,15 @@ class BlogController extends Controller
 
     public function show(Post $post)
     {
-        $comments = $post->comments()->with('user')->orderBy('id')->paginate(3);
+        $comments = $post->comments()->whereNull('parent_id')->with('user')
+            ->with(['replies' => function ($query) {
+                $query->latest()->limit(1);
+            }])
+            ->orderByDesc('created_at')->paginate(3);
 
-        $post->with('comments', 'tags', 'likes');
+// dd($comments);
+
+        $post->with('tags', 'likes');
 
         return view('blogs.show', ['post' => $post, 'comments' => $comments]);
     }
